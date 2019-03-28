@@ -24,28 +24,27 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               child: Column(
                 children: <Widget>[
                   TextFormField(
-                    decoration: InputDecoration(labelText: "Subject"),
-                    autofocus: true,
-                    validator: (value) {
-                      if(value.isEmpty){
-                        return "Please fill subject";
-                      }
-                    },
-                    onSaved: (value) {
-                      this._subject = value;
-                    },
-                  ),
+                      decoration: InputDecoration(labelText: "Subject"),
+                      textInputAction: TextInputAction.go,
+                      autofocus: true,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return "Please fill subject";
+                        }
+                      },
+                      onSaved: (value) {
+                        this._subject = value;
+                      },
+                      onFieldSubmitted: (value) {
+                        this._saveForm();
+                      }),
                   Row(
                     children: <Widget>[
                       Expanded(
                         child: RaisedButton(
                           child: Text("Save"),
                           onPressed: () {
-                            if(_formKey.currentState.validate()){
-                              _formKey.currentState.save();
-                              todo.insert(Todo(_subject));
-                              Navigator.of(context).pop();
-                            }
+                            this._saveForm();
                           },
                         ),
                       )
@@ -54,5 +53,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 ],
               ),
             )));
+  }
+
+  void _saveForm() {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      todo.insert(Todo(_subject));
+      Navigator.of(context).pop();
+    }
   }
 }
