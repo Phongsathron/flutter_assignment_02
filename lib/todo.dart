@@ -66,7 +66,6 @@ class TodoProvider {
     List<Map> maps = await db.query(tableTodo,
         columns: [columnId, columnDone, columnSubject]);
     List<Todo> list = maps.isNotEmpty ? maps.map((c) => Todo.fromMap(c)).toList() : [];
-    print(list);
     return list;
   }
 
@@ -91,6 +90,15 @@ class TodoProvider {
     await this.open();
     return await db.update(tableTodo, todo.toMap(),
         where: '$columnId = ?', whereArgs: [todo.id]);
+  }
+
+  Future<int> deleteList(List<Todo> todos) async {
+    bool success = false;
+    for(Todo todo in todos){
+      int temp = await this.delete(todo.id);
+      success = success && (temp == 1);
+    }
+    return success ? 1 : 0;
   }
 
   Future close() async => db.close();

@@ -13,7 +13,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // todo.open("todolist.db");
     return Scaffold(
         appBar: AppBar(
           title: Text("New Subject"),
@@ -26,6 +25,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 children: <Widget>[
                   TextFormField(
                     decoration: InputDecoration(labelText: "Subject"),
+                    autofocus: true,
                     validator: (value) {
                       if(value.isEmpty){
                         return "Please fill subject";

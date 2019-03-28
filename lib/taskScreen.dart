@@ -26,7 +26,9 @@ class TaskScreenState extends State<TaskScreen> {
       IconButton(
         icon: Icon(Icons.delete),
         tooltip: 'Delete',
-        onPressed: () {},
+        onPressed: () {
+          _removeTasks(tasks.where((Todo task) => task.done).toList());
+        },
       )
     ];
 
@@ -34,7 +36,7 @@ class TaskScreenState extends State<TaskScreen> {
       appBar: AppBar(
         title: Text("Todo"),
         actions: <Widget>[
-          actionButton[_currentIndex]
+          actionButton[_currentIndex],
         ],
       ),
       body: FutureBuilder<List<Todo>>(
@@ -43,22 +45,23 @@ class TaskScreenState extends State<TaskScreen> {
           if (todoLists.hasData) {
             tasks = todoLists.data;
             switch (_currentIndex) {
-              case 0 : 
+              case 0:
                 return this._pageNotDone();
                 break;
-              default:
+              case 1:
                 return this._pageDone();
                 break;
             }
-          } else {
+          }
+          else {
             return Center(
-              child: Text('No data.'),
+              child: CircularProgressIndicator(),
             );
           }
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        onTap: onTabtapped,
+        onTap: _onTabtapped,
         currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.list), title: Text("Task")),
@@ -84,27 +87,42 @@ class TaskScreenState extends State<TaskScreen> {
       return ListView.builder(
         itemCount: tasksList.length,
         itemBuilder: (BuildContext context, int index) {
-          return CheckboxListTile(
-            title: Text(tasksList[index].subject),
-            value: tasksList[index].done,
-            onChanged: (value) {
-              setState(() {
-                tasks.where((Todo task) => task.id == tasksList[index].id)
-                    .first.done = value;
-              });
-              todo.update(tasksList[index]);
-            },
+          return Column(
+            children: <Widget>[
+              CheckboxListTile(
+                title: Text(tasksList[index].subject),
+                value: tasksList[index].done,
+                onChanged: (value) async {
+                  setState(() {
+                    tasks
+                        .where((Todo task) => task.id == tasksList[index].id)
+                        .first
+                        .done = value;
+                  });
+                  await todo.update(tasksList[index]);
+                },
+              ),
+              Divider()
+            ],
           );
         },
       );
     } else {
-      return Center(child: Text('No data.'));
+      return Center(child: Text('No data found..'));
     }
   }
 
-  void onTabtapped(int index) {
+  void _onTabtapped(int index) {
     setState(() {
       _currentIndex = index;
+    });
+  }
+
+  void _removeTasks(List<Todo> tasksList) {
+    todo.deleteList(tasksList).then((s) {
+      setState(() {
+        tasksList.removeWhere((Todo x) => tasksList.contains(x));
+      });
     });
   }
 }
