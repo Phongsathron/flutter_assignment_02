@@ -10,70 +10,49 @@ class TaskScreen extends StatefulWidget {
 
 class TaskScreenState extends State<TaskScreen> {
   int _currentIndex = 0;
-  List<Widget> _taskScreens = [];
+  List<Todo> tasks = [];
   TodoProvider todo = TodoProvider("todolist.db");
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> actionButton = [
+      IconButton(
+        icon: Icon(Icons.add),
+        tooltip: 'Add',
+        onPressed: () {
+          Navigator.pushNamed(context, '/add');
+        },
+      ),
+      IconButton(
+        icon: Icon(Icons.delete),
+        tooltip: 'Delete',
+        onPressed: () {},
+      )
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Todo"),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            tooltip: "Add",
-            onPressed: () {
-              Navigator.pushNamed(context, '/add');
-            },
-          )
+          actionButton[_currentIndex]
         ],
       ),
       body: FutureBuilder<List<Todo>>(
         future: todo.getAllTodos(),
         builder: (BuildContext context, AsyncSnapshot<List<Todo>> todoLists) {
-          if (todoLists.hasData && todoLists.data.length > 0) {
-            if (_currentIndex == 0){
-              return ListView.builder(
-                itemCount: todoLists.data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Todo todolist = todoLists.data[index];
-                  if(!todolist.done) {
-                    return Column(
-                      children: <Widget>[
-                        CheckboxListTile(
-                          title: Text(todolist.subject),
-                          value: todolist.done,
-                          onChanged: (bool value) {
-                            todolist.done = value;
-                            todo.update(todolist);
-                          },
-                        ),
-                        Divider()
-                      ],
-                    );
-                  }
-                },
-              );
-            }
-            else if(_currentIndex == 1){
-              return ListView.builder(
-                itemCount: todoLists.data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Todo todolist = todoLists.data[index];
-                  if(todolist.done) {
-                    return Column(
-                      children: <Widget>[
-                        ListTile(title: Text(todolist.subject)),
-                        Divider()
-                      ],
-                    );
-                  }
-                },
-              );
+          if (todoLists.hasData) {
+            tasks = todoLists.data;
+            switch (_currentIndex) {
+              case 0 : 
+                return this._pageNotDone();
+                break;
+              default:
+                return this._pageDone();
+                break;
             }
           } else {
             return Center(
-              child: Text("No data found"),
+              child: Text('No data.'),
             );
           }
         },
@@ -90,39 +69,37 @@ class TaskScreenState extends State<TaskScreen> {
     );
   }
 
-  Widget todolist() {
-    return Container(
-      child: FutureBuilder<List<Todo>>(
-        future: todo.getAllTodos(),
-        builder: (BuildContext context, AsyncSnapshot<List<Todo>> todoLists) {
-          if (todoLists.hasData) {
-            return ListView.builder(
-              itemCount: todoLists.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                Todo todolist = todoLists.data[index];
-                return ListTile(title: Text(todolist.subject));
-              },
-            );
-          } else {
-            return Center(
-              child: Text("No data found"),
-            );
-          }
-        },
-      ),
-    );
+  Widget _pageNotDone() {
+    List<Todo> todoDone = tasks.where((Todo task) => !task.done).toList();
+    return _buildTaskList(todoDone);
   }
 
-  Widget completedList() {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: Center(
-            child: Text("No completed data found."),
-          ),
-        )
-      ],
-    );
+  Widget _pageDone() {
+    List<Todo> todoDone = tasks.where((Todo task) => task.done).toList();
+    return _buildTaskList(todoDone);
+  }
+
+  Widget _buildTaskList(List<Todo> tasksList) {
+    if (tasksList.length > 0) {
+      return ListView.builder(
+        itemCount: tasksList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return CheckboxListTile(
+            title: Text(tasksList[index].subject),
+            value: tasksList[index].done,
+            onChanged: (value) {
+              setState(() {
+                tasks.where((Todo task) => task.id == tasksList[index].id)
+                    .first.done = value;
+              });
+              todo.update(tasksList[index]);
+            },
+          );
+        },
+      );
+    } else {
+      return Center(child: Text('No data.'));
+    }
   }
 
   void onTabtapped(int index) {

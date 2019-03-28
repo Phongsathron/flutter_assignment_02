@@ -41,7 +41,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         child: RaisedButton(
                           child: Text("Save"),
                           onPressed: () {
-                            // print(todo.getAllTodo());
                             if(_formKey.currentState.validate()){
                               _formKey.currentState.save();
                               todo.insert(Todo(_subject));
