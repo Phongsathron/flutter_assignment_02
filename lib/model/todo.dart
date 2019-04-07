@@ -7,12 +7,12 @@ final String columnDone = 'done';
 
 class Todo {
   int id;
-  String subject;
+  String title;
   bool done = false;
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-      columnTitle: subject,
+      columnTitle: title,
       columnDone: done == true ? 1 : 0
     };
     if (id != null) {
@@ -21,17 +21,17 @@ class Todo {
     return map;
   }
 
-  Todo(this.subject);
+  Todo(this.title);
 
   Todo.fromMap(Map<String, dynamic> map) {
     id = map[columnId];
-    subject = map[columnTitle];
+    title = map[columnTitle];
     done = map[columnDone] == 1;
   }
 
   @override
   String toString(){
-    return '{${this.id}, ${this.subject}, ${this.done}}';
+    return '{${this.id}, ${this.title}, ${this.done}}';
   }
 }
 
