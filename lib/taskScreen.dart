@@ -102,7 +102,9 @@ class TaskScreenState extends State<TaskScreen> {
                   await todo.update(tasksList[index]);
                 },
               ),
-              Divider()
+              Divider(
+                color: Colors.black,
+              )
               // Divider()
             ],
           );
