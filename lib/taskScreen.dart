@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'todo.dart';
+import 'model/todo.dart';
 
 class TaskScreen extends StatefulWidget {
   @override
@@ -90,7 +90,7 @@ class TaskScreenState extends State<TaskScreen> {
           return Column(
             children: <Widget>[
               CheckboxListTile(
-                title: Text(tasksList[index].subject),
+                title: Text(tasksList[index].title),
                 value: tasksList[index].done,
                 onChanged: (value) async {
                   setState(() {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'todo.dart';
+import 'model/todo.dart';
 
 class AddTaskScreen extends StatefulWidget {
   @override
