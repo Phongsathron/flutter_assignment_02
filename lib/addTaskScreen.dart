@@ -8,7 +8,7 @@ class AddTaskScreen extends StatefulWidget {
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
-  TodoProvider todo = TodoProvider("todolist.db");
+  TodoProvider todo = TodoProvider("todo.db");
   String _subject;
 
   @override

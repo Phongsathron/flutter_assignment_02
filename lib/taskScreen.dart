@@ -11,7 +11,7 @@ class TaskScreen extends StatefulWidget {
 class TaskScreenState extends State<TaskScreen> {
   int _currentIndex = 0;
   List<Todo> tasks = [];
-  TodoProvider todo = TodoProvider("todolist.db");
+  TodoProvider todo = TodoProvider("todo.db");
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +103,7 @@ class TaskScreenState extends State<TaskScreen> {
                 },
               ),
               Divider()
+              // Divider()
             ],
           );
         },

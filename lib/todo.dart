@@ -2,7 +2,7 @@ import 'package:sqflite/sqflite.dart';
 
 final String tableTodo = 'todo';
 final String columnId = '_id';
-final String columnSubject = 'subject';
+final String columnTitle = 'title';
 final String columnDone = 'done';
 
 class Todo {
@@ -12,7 +12,7 @@ class Todo {
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-      columnSubject: subject,
+      columnTitle: subject,
       columnDone: done == true ? 1 : 0
     };
     if (id != null) {
@@ -25,7 +25,7 @@ class Todo {
 
   Todo.fromMap(Map<String, dynamic> map) {
     id = map[columnId];
-    subject = map[columnSubject];
+    subject = map[columnTitle];
     done = map[columnDone] == 1;
   }
 
@@ -47,7 +47,7 @@ class TodoProvider {
         await db.execute('''
         create table $tableTodo ( 
           $columnId integer primary key autoincrement, 
-          $columnSubject text not null,
+          $columnTitle text not null,
           $columnDone integer not null
         )
         ''');
@@ -64,7 +64,7 @@ class TodoProvider {
   Future<List<Todo>> getAllTodos() async {
     await this.open();
     List<Map> maps = await db.query(tableTodo,
-        columns: [columnId, columnDone, columnSubject]);
+        columns: [columnId, columnDone, columnTitle]);
     List<Todo> list = maps.isNotEmpty ? maps.map((c) => Todo.fromMap(c)).toList() : [];
     return list;
   }
@@ -72,7 +72,7 @@ class TodoProvider {
   Future<Todo> getTodo(int id) async {
     await this.open();
     List<Map> maps = await db.query(tableTodo,
-        columns: [columnId, columnDone, columnSubject],
+        columns: [columnId, columnDone, columnTitle],
         where: '$columnId = ?',
         whereArgs: [id]);
     if (maps.length > 0) {
