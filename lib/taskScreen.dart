@@ -82,32 +82,43 @@ class TaskScreenState extends State<TaskScreen> {
     return _buildTaskList(todoDone);
   }
 
+  Widget _taskListTile(Todo taskitem, int index, int end){
+    return Column(
+      children: <Widget>[
+        CheckboxListTile(
+          title: Text(taskitem.title),
+          value: taskitem.done,
+          onChanged: (value) async {
+            setState(() {
+              tasks
+                  .where((Todo task) => task.id == taskitem.id)
+                  .first
+                  .done = value;
+            });
+            await todo.update(taskitem);
+          },
+        ),
+        Builder(
+          builder: (BuildContext context){
+            if(index != end-1){
+              return Divider(
+                color: Colors.black,
+              );
+            }else{
+              return Container(width: 0, height: 0);
+            }
+          },
+        )
+      ],
+    );
+  }
+
   Widget _buildTaskList(List<Todo> tasksList) {
     if (tasksList.length > 0) {
       return ListView.builder(
         itemCount: tasksList.length,
         itemBuilder: (BuildContext context, int index) {
-          return Column(
-            children: <Widget>[
-              CheckboxListTile(
-                title: Text(tasksList[index].title),
-                value: tasksList[index].done,
-                onChanged: (value) async {
-                  setState(() {
-                    tasks
-                        .where((Todo task) => task.id == tasksList[index].id)
-                        .first
-                        .done = value;
-                  });
-                  await todo.update(tasksList[index]);
-                },
-              ),
-              Divider(
-                color: Colors.black,
-              )
-              // Divider()
-            ],
-          );
+          return this._taskListTile(tasksList[index], index, tasksList.length);
         },
       );
     } else {
